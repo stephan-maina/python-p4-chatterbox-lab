@@ -1,34 +1,23 @@
 #!/usr/bin/env python3
+from app import db
+from models import TodoItem
 
-from random import choice as rc
+# Create and add some initial tasks to the database
+def seed_data():
+    with db.app.app_context():
+        db.create_all()
 
-from faker import Faker
+        task1 = TodoItem(text='Playing PS5', completed=False)
+        task2 = TodoItem(text='Swimming', completed=False)
+        task3 = TodoItem(text='Gym', completed=False)
+        task4 = TodoItem(text='Nature walk', completed=False)
+        task5 = TodoItem(text='Road trip with friends', completed=False)
 
-from app import app
-from models import db, Message
+        db.session.add(task1)
+        db.session.add(task2)
+        db.session.add(task3)
+        db.session.add(task4)
+        db.session.add(task5)
 
-fake = Faker()
+        db.session.commit()
 
-usernames = [fake.first_name() for i in range(4)]
-if "Duane" not in usernames:
-    usernames.append("Duane")
-
-def make_messages():
-
-    Message.query.delete()
-    
-    messages = []
-
-    for i in range(20):
-        message = Message(
-            body=fake.sentence(),
-            username=rc(usernames),
-        )
-        messages.append(message)
-
-    db.session.add_all(messages)
-    db.session.commit()        
-
-if __name__ == '__main__':
-    with app.app_context():
-        make_messages()
